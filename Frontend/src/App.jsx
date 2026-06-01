@@ -26,7 +26,7 @@ async function reviewCode() {
   const response = await axios.post('http://localhost:3000/ai/get-review', {code})
    setReview(response.data)
 }
-//  let sangam = "unused var here"
+ let sangam = "unused var here"
   return (
     <>
       <main>
