@@ -12,7 +12,7 @@ const Editor = SimpleEditorModule.Editor || SimpleEditorModule.default?.default 
 
 
 function App() {
-  const [count, setCount] = useState(0)
+  // const [count, setCount] = useState(0)
   const [code, setCode] = useState(`function sum() {
     return 1 + 1
     }`)
@@ -26,7 +26,7 @@ async function reviewCode() {
   const response = await axios.post('http://localhost:3000/ai/get-review', {code})
    setReview(response.data)
 }
-
+ let sangam = "unused var here"
   return (
     <>
       <main>

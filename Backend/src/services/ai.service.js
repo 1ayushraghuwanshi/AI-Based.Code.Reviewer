@@ -1,9 +1,9 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash-lite",
-    systemInstruction: `
+  model: 'gemini-2.5-flash-lite',
+  systemInstruction: `
   
       Here’s a solid system instruction for your AI code reviewer:
 
@@ -77,30 +77,32 @@ const model = genAI.getGenerativeModel({
                 Your mission is to ensure every piece of code follows high standards. Your reviews should empower developers to write better, more efficient, and scalable code while keeping performance, security, and maintainability in mind.
 
                 Would you like any adjustments based on your specific needs? 🚀 
-   ` 
-})
+   `,
+});
 
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-     async function generateContent(prompt, retries = 3, delayMs = 3000) {
-    try {
-        const result = await model.generateContent(prompt);
-        return result.response.text();
-    } catch (error) {
-        // 2. Check if the error is an HTTP 429 (Too Many Requests)
-        if (error.status === 429 && retries > 0) {
-            console.warn(`[Gemini API] Rate limit hit. Retrying in ${delayMs / 1000} seconds... (${retries} retries left)`);
-            
-            // Wait for the specified delay time
-            await delay(delayMs);
-            
-            // Retry the function recursively, doubling the wait time (Exponential Backoff)
-            return generateContent(prompt, retries - 1, delayMs * 2);
-        }
-        
-        // If it's a different error or we ran out of retries, pass it along
-        throw error;
+async function generateContent(prompt, retries = 3, delayMs = 3000) {
+  try {
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    // 2. Check if the error is an HTTP 429 (Too Many Requests)
+    if (error.status === 429 && retries > 0) {
+      console.warn(
+        `[Gemini API] Rate limit hit. Retrying in ${delayMs / 1000} seconds... (${retries} retries left)`,
+      );
+
+      // Wait for the specified delay time
+      await delay(delayMs);
+
+      // Retry the function recursively, doubling the wait time (Exponential Backoff)
+      return generateContent(prompt, retries - 1, delayMs * 2);
     }
+
+    // If it's a different error or we ran out of retries, pass it along
+    throw error;
+  }
 }
 
 module.exports = generateContent;
